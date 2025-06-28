@@ -1,0 +1,13 @@
+.malcolm-enter-active,
+.malcolm-leave-active {
+  transition: opacity 0.1s ease;
+}
+
+.malcolm-enter-from,
+.malcolm-leave-to {
+  opacity: 0;
+}
+
+* {
+    font-family: "Essential PragmataPro";
+}

@@ -12,7 +12,7 @@ info: |
 drawings:
   persist: false
 # slide transition: https://sli.dev/guide/animations.html#slide-transitions
-transition: fade-out
+transition: malcolm
 # enable MDC Syntax: https://sli.dev/features/mdc
 mdc: true
 ---
