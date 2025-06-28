@@ -1,0 +1,17 @@
+[package]
+name = "privsep-orig"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+privsep-channel.path = "../privsep-channel"
+
+clap.workspace = true
+mio.workspace = true
+nix.workspace = true
+pledge.workspace = true
+serde.workspace = true
+tempfile.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+unveil.workspace = true

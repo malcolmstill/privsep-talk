@@ -1,0 +1,15 @@
+[package]
+name = "privsep-channel"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bincode.workspace = true
+byteorder.workspace = true
+mio.workspace = true
+nix.workspace = true
+sendfd.workspace = true
+serde.workspace = true
+tempfile.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
