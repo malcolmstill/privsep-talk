@@ -80,6 +80,6 @@ Talk assumes familiarity with rust
 - Security focussed
 - https://www.openbsd.org/innovations.html
   - privdrop
-    - pledge(2)
-    - unveil(2)
+    - [pledge(2)](https://man.openbsd.org/pledge.2) 2015
+    - [unveil(2)](https://man.openbsd.org/unveil.2) 2018
   - privsep
