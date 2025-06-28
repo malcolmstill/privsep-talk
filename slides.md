@@ -58,31 +58,28 @@ The last comment block of each slide will be treated as slide notes. It will be 
 -->
 
 ---
-# Fade out
-transition: fade-out
+# Slide to talk about rust background
+layout: center
 ---
 
-# What is Slidev?
+# Rust
 
-Slidev is a slides maker and presenter designed for developers, consist of the following features
+Talk assumes familiarity with rust
 
-<!-- - 📝 **Text-based** - focus on the content with Markdown, and then style them later -->
-<!-- - 🎨 **Themable** - themes can be shared and re-used as npm packages -->
-<!-- - 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion -->
-- 🤹 **Interactive** - embed Vue components to enhance your expressions
-- 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export to PDF, PPTX, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - virtually anything that's possible on a webpage is possible in Slidev
-  <br>
-  <br>
+---
+# Facts about OpenBSD
+# layout: center
+---
 
-Read more about [Why Slidev?](https://sli.dev/guide/why)
+# OpenBSD
 
-<!-- 
-You can have `style` tag in markdown to override the style for the current page.
-Learn more: https://sli.dev/features/slide-scope-style
- -->
-
-<!--
-Here is another comment.
--->
+- Unix-like operating system
+- Specifically a BSD
+  - See also: FreeBSD, NetBSD
+- Forked from NetBSD in 1995
+- Security focussed
+- https://www.openbsd.org/innovations.html
+  - privdrop
+    - pledge(2)
+    - unveil(2)
+  - privsep
