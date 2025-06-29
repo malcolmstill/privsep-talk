@@ -222,6 +222,47 @@ layout: center
 layout: center
 ---
 
+# Examples
+
+---
+# Test
+layout: center
+---
+
+# dhcpleased
+
+```
+  PID TT  STAT        TIME COMMAND
+15709 ??  IU       0:00.31 - /sbin/dhcpleased
+33347 ??  Ip       0:00.29 |-- dhcpleased: engine (dhcpleased)
+84909 ??  IpU      0:00.42 `-- dhcpleased: frontend (dhcpleased)
+```
+
+OpenBSD kindly makes use of [`setproctitle(3)`](https://man.openbsd.org/setproctitle.3) to give subprocesses useful subsystem names (`engine` and `frontend`)
+
+---
+# Test
+layout: center
+---
+
+# smtpd
+
+```
+  PID TT  STAT        TIME COMMAND
+41810 ??  Ip       0:00.52 - /usr/sbin/smtpd
+11124 ??  Ipc      0:00.60 |-- smtpd: crypto (smtpd)
+74895 ??  Ipc      0:00.30 |-- smtpd: control (smtpd)
+50559 ??  Ip       0:00.31 |-- smtpd: lookup (smtpd)
+27218 ??  Ipc      0:00.85 |-- smtpd: dispatcher (smtpd)
+13188 ??  Ipc      0:00.80 |-- smtpd: queue (smtpd)
+36552 ??  Ipc      0:00.51 `-- smtpd: scheduler (smtpd)
+```
+
+---
+# Test
+layout: center
+---
+
 # Cool, but we don't use OpenBSD
 
 ---
@@ -240,7 +281,7 @@ layout: center
 layout: center
 ---
 
-# ...but OpenBSD's approach is particularly ergonomic
+...but OpenBSD's approach is particularly ergonomic
 
 ---
 # Test
