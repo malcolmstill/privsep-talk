@@ -83,3 +83,64 @@ Talk assumes familiarity with rust
     - [pledge(2)](https://man.openbsd.org/pledge.2) 2015
     - [unveil(2)](https://man.openbsd.org/unveil.2) 2018
   - privsep
+
+---
+# Slide to introduce privdrop
+# layout: center
+---
+
+# Privdrop
+
+- Basic idea: process starts with some high privilege and lowers itself to some less privileged state
+- Classic approach: change user running process
+  - E.g. process starts as `root` (uid = 0) then subsequently lowers itself to some other user `alice` (uid = 6001)
+- OpenBSD introduced two new primitives
+  - pledge
+  - unveil
+- Much more granular and therefore much more powerful (in terms of security)
+- Both scoped to processes
+
+---
+# Describe pledge
+# layout: center
+---
+
+# pledge syscall
+
+Signature
+```c
+int
+pledge(const char *promises, const char *execpromises);
+```
+
+Examples
+```c
+pledge("stdio rpath wpath", "");
+pledge("stdio", "");
+pledge("", "");
+```
+
+- Note we can, an likely will, call pledge multiple times
+- Each time will restrict promises
+- What are promises?
+  - Bundles of syscalls
+  - What decides which syscalls are part of which promise?
+    - OpenBSD team audited existing code and used engineering judgement to bin the complete syscall space into the different promises
+    - May not be perfect but it is pragmatic
+- Making a syscall that is not in one of our current level of promises will cause the kernel to (unceremoniously) kill our process``
+
+---
+# Slide for describing unveil
+---
+
+# unveil syscall
+
+Hides parts of the filesystem from our program.
+
+Example
+```c
+unveil("/etc/resolv.conf", "rw");
+unveil(NULL, NULL);
+```
+
+- Any attempt to access a file not in the set of unveil calls will fail with not found
