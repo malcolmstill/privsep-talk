@@ -107,6 +107,8 @@ Talk assumes familiarity with rust
 
 # pledge syscall
 
+Opts in to only allowing certain syscalls
+
 Signature
 ```c
 int
@@ -127,20 +129,47 @@ pledge("", "");
   - What decides which syscalls are part of which promise?
     - OpenBSD team audited existing code and used engineering judgement to bin the complete syscall space into the different promises
     - May not be perfect but it is pragmatic
-- Making a syscall that is not in one of our current level of promises will cause the kernel to (unceremoniously) kill our process``
+- Making a syscall that is not in one of our current level of promises will cause the kernel to (unceremoniously) kill our process
 
 ---
 # Slide for describing unveil
+layout: center
 ---
 
-# unveil syscall
+# unveil
 
 Hides parts of the filesystem from our program.
 
 Example
+
 ```c
 unveil("/etc/resolv.conf", "rw");
 unveil(NULL, NULL);
 ```
 
 - Any attempt to access a file not in the set of unveil calls will fail with not found
+- Final `unveil(NULL, NULL)` is where filesystem hiding takes effect
+- Again, applies to the current process
+
+---
+# Program structure
+layout: center
+---
+
+# program structure
+
+```mermaid {theme: 'dark', scale: 0.7}
+flowchart TD
+  Start([Start])
+  Init[/"Initialisation"/]
+  LoopStart{{"Start loop"}}
+  Process["Steady-state logic"]
+  Wait["End loop"]
+  End([End])
+
+  Start --> Init --> LoopStart
+  LoopStart --> Process --> Wait --> LoopStart
+
+  %% Optional end condition
+  Wait --> End
+```
