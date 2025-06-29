@@ -84,6 +84,13 @@ Talk assumes familiarity with rust
     - [unveil(2)](https://man.openbsd.org/unveil.2) 2018
   - privsep
 
+<!--
+Question: who uses BSD?
+
+- PlayStation 4 and PlayStation 5 run versions of FreeBSD
+- macos takes some components from BSD
+!-->
+
 ---
 # Slide to introduce privdrop
 # layout: center
@@ -173,3 +180,88 @@ flowchart TD
   %% Optional end condition
   Wait --> End
 ```
+
+<!-- 
+Idea: we can do a number of pledge calls during the initialisation phase of the program as we bring up the program state.
+Similalry we can do a single unveil set before hitting the stead-state loop
+
+Admission: and this is where my ignorance was...like yeah it's cool that we can opt of out of various syscalls and parts
+of the file system, but in some arbitrarily complicated program can I actually get to the point where I'm omitting enough
+syscalls that a bug in my program isn't still game over. And this is because I actually did not understand the pattern.
+!-->
+
+---
+# Test
+layout: center
+---
+
+# Actual structure
+
+- Multiple cooperating processes
+- We get N "goes" at pledging / unveiling down
+
+---
+# Test
+layout: center
+---
+
+# Privsep
+
+---
+# Test
+layout: center
+---
+
+- Our pledge / unveil primitives apply on the process level
+- Separate our overall program into separate subsystems each of which runs as a process
+- Set of processes cooperate to provide equivalent of single process
+- The different subsystems then can have different pledges and unveil
+
+---
+# Test
+layout: center
+---
+
+# Cool, but we don't use OpenBSD
+
+---
+# Test
+layout: center
+---
+
+# Sandboxing in other OSes
+
+- FreeBSD capsicum
+- Linux seccomp
+- NetBSD secmodel_sandbox (seems experimental)
+
+---
+# Test
+layout: center
+---
+
+# ...but OpenBSD's approach is particularly ergonomic
+
+---
+# Test
+layout: center
+---
+
+# Conclusions
+
+---
+# Test
+layout: center
+---
+
+# Principle of least privilege
+
+As far as your system allows separate privileges and drop privileges
+
+--- 
+# Test
+layout: center
+---
+
+<img src="./runbsd.png" width="300">
+runbsd.info
