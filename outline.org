@@ -1,0 +1,84 @@
+* Impressum
+** Malcolm
+** Senior Engineer @ Swordbreaker
+* Setting the scene
+** We're all at a rust meeting
+** Why do we use rust?
+*** Probably because we get C/C++ like performance but with memory safety
+*** I.e we can write some rust code, release it and still sleep at night
+** But we have all of this existing C code
+*** Linux
+*** FreeBSD
+*** OpenBSD
+*** etc.
+** Why do I find it acceptable to run C code like in Linux?
+*** I guess one answer is because I don't really have a choice
+*** Maybe also some assumption that whilst I wouldn't necessarily be confident writing C code, that doesn't preclude other people from being good at it?
+**** Maybe we should list memory-safety CVEs here
+*** But certainly the thought would still occur to me...is their some memory vulnerability in the code I am running right now?
+** But, and I'm going to make an assertion
+*** I would not have the same worry if I was running OpenBSD
+** And the question I'm / we are going to try and answer tonight is why I feel like that?
+** Despite the fact that OpenBSD programs and services are (largely) written in C
+** WHat is it that the OpenBSD authors are doing in the way they write C code, that would make me not worried about running, say, an internet-facing OpenBSD server
+*** They are designing programs in a particular way to achieve this feeling
+* TItle slide
+** The crab and the pufferfish
+*** What rustaceans can learn about (secure) software design from OpenBSD
+* OpenBSD
+** Released July 1996 by Theo de Raadt
+*** Fork from NetBSD
+** Focus on security
+** Innovations
+*** Notably supposed first instance of privsep in OpenSSH in 2002
+**** Surprisingly late
+* OpenBSD Patterns
+** Privsep / privdrop
+* Privdrop
+** User change
+** pledge
+** unveil
+* Change user
+* pledge
+** pledge(pledges, exec_pledges)
+** e.g. pledge("stdio recvfd", NULL);
+** OpenBSD defines "bundles" of syscalls. A call to pledge lists zero, one or more bundles of syscalls
+** How the bundles organised?
+*** Predefined in kernel
+*** The OpenBSD team figured out the "stratification" of these bundles by auditing existing OpenBSD programs and services
+*** Practical stratification of syscalls rather than being perfect, e.g. you may end up with some syscalls that you're not using
+*** If you provide an empty string for the pledges, you can't call any syscalls
+** pledge can be called multiple times
+*** Typically each pledge will reduce the available syscalls
+* unveil
+** unveil(2) takes two args, a path and a set of permissions
+** unveil(path, permissions) tells the OpenBSD kernel that you would like your program to be able to see path
+** unveil can be called any number of times to register interest in multuple files or directories
+** After having chosen a set of paths a final call to unveil(NULL, NULL) will hide all other files on the filesystem from the program
+*** So in some ways similar to a chroot but actaully quite different...and more powerful, I'd say
+*** E.g. let's say you have a daemon that updates /etc/resolv.conf...you could use unveil("/etc/resolv.conf", "rw"); unveil(NULL, NULL) to allow reading / writing /etc/resolv.conf and absolutely noting else
+* Privsep
+** Insight: some parts of a program may have to deal with untrusted input, some parts of a program may require some level of elevated privileges...if those parts of the program are disjoint can we separate them out and use different privdrop in each component?
+** As privdrop (user change, pledge, unveil) operate on the process level (in OpenBSD), can we factor our program into different processes
+** The processes still generally require coordination so they communicate over, say, unix domain sockets
+** Each process performs appropriate pledge and unveil to reduce privilege
+** E.g. component of program that parses untrusted input (e.g. bytes from the network) can be separated out and perhaps it only needs pledge `stdio`
+** If the parser has some memory bug in the parsing code that is compromisable the process is extremely limited in what it can do
+** That process may be communicating with another process that has some interesting privilege, e.g. it can update the routing table on the machine, but attacking parser won't give you that privilege
+* Diagram showing
+** Forking of children
+** Check everything is okay with file descriptors
+*** Perhaps explain file descriptor is just a "token" or "reference"
+*** Importantly the token is specific to a process...a forked process having the the same file open will have (in general) a different token
+** Inheritence of file descriptors for unix domain socket ends
+** Note similarity to mpsc channel
+** Having established channels between parent and children, we can establish a child-to-child connection by passing file descriptors across our parent-child sockets
+* References
+** https://www.reddit.com/r/openbsd/comments/s6peiu/any_privilege_separation_pledge_hello_world/
+** https://www.openbsd.org/innovations.html
+** https://sha256.net/privsep.html
+** https://isopenbsdsecu.re/mitigations/privsec_privdrop/
+** https://brynet.ca/article-pflogd.html
+** https://isopenbsdsecu.re/mitigations/fork_exec/
+** https://news.ycombinator.com/item?id=35067198
+*** Flamewar

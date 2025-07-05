@@ -1,0 +1,14 @@
+* DONE Process that forks and creates a channel over which we can send file descriptors
+* DONE fork+exec instead of just fork?
+** DONE Introduce clap
+* DONE Three processes
+** This maybe looks cleaner with fork+exec?
+* DONE Two subprocess communicate, i.e. we have the parent send the two ends of another socket over the already established parent<->child channels
+* DONE mio
+** I've actually gone wiht tokio initially...maybe for the best if I have more experience with tokio?
+* TODO Channel message type can differ between channels
+** Insight: our Msg-specific code is at the very top of send and the very bottom of recv
+*** Factor these out. Make assumption that we only ever max 1 fd...probably totally fine
+* TODO One process has some sort of parser
+* TODO Woops parser using a third-party library that is backdoored unbeknownst to us
+* TODO Understand some of the stuff 
