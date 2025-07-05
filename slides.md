@@ -17,6 +17,27 @@ transition: malcolm
 mdc: true
 ---
 
+<!--
+
+Points (some big some small) I want to make:
+- TODO: should we even bother with this pattern in rust given its memory safety?
+- TODO: not arguing that we are completely safe, a compromised process would then
+        be free to attempt to compromise other processes over our internal messaging
+        protocol. That said we would need two exploits instead of one and we can
+        perhaps have much more confidence in our internal protocol, as it may be some
+        common library that has lots of eyes on and is thouroughly tested.
+- TODO: pledge and unveil operate on process level
+- TODO: we always would fork (for new process) but exec gives us new address space: 
+        fresh go at address space layout randomisation + remove secrets that were
+        in original memory space
+- TODO: our code ends up in a shape very close to sans IO.
+- TODO: that I had a misunderstanding about pledge / unveil because I didn't realise
+        it was implying this multi-process pattern
+- TODO: parent processes initialise socket by using fixed file descriptors values +
+        file descriptor inheritence
+
+!-->
+
 # Malcolm Still
 
 - 🧑‍💻 Senior Software Engineer @ Swordbreaker
@@ -29,6 +50,18 @@ layout: center
 
 
 # An interesting thing happened recently...
+
+<!--
+1. Why do we like rust?
+2. Lots of things to like but go out on a limb and say memory safety without compromising on performance
+3. The idea of writing C no longer appealing. With rust we can write services and sleep at night
+4. But we still run a lot of C / C++ software
+5. Assumption that other people know what they're doing...don't think about it too much.
+6. Maybe not rational
+7. So I thought it was interesting when I was recently trying to understand OpenBSD security primitives
+   and realised that I would quite happily run OpenBSD program / services...why?
+8. There's a very particular pattern 
+!-->
 
 
 ---
@@ -256,6 +289,62 @@ layout: center
 27218 ??  Ipc      0:00.85 |-- smtpd: dispatcher (smtpd)
 13188 ??  Ipc      0:00.80 |-- smtpd: queue (smtpd)
 36552 ??  Ipc      0:00.51 `-- smtpd: scheduler (smtpd)
+```
+
+---
+# Test
+layout: center
+---
+
+# What does this pattern look like in rust?
+
+---
+# Test
+layout: center
+---
+
+# Ingredients
+
+- [`std::process::Command`](https://doc.rust-lang.org/std/process/struct.Command.html) (or equivalent)
+- [`clap`](https://github.com/clap-rs/clap) for top-level behaviour switching of subsystems
+- [`bincode`](https://github.com/bincode-org/bincode) for (de)serilization on unix sockets
+- [`sendfd`](https://github.com/standard-ai/sendfd) crate for helping send file descriptors over our unix sockets
+
+<!--
+- `std::process::Command` or equivalent...e.g. tokio::process::Command...we want to fork new processes
+- top-level switching of behaviour for different subsystems...we'll use `clap`
+
+!-->
+
+---
+# Test
+layout: center
+---
+
+```rs
+#[tokio::main]
+async fn main() -> Result<()> {
+    let cli = Cli::parse();
+
+    match cli.command {
+        None => controller::controller().await,
+        Some(Commands::Parser) => parser::parser().await,
+        Some(Commands::Engine) => engine::engine().await,
+    }
+}
+```
+
+```sh
+privsepd --help
+Usage: privsepd [SUBSYSTEM]
+
+Subsystems:
+  parser  Parser subsystem
+  engine  Engine subsystem
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
 ```
 
 ---
