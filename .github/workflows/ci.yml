@@ -1,4 +1,4 @@
-name: Build and test
+name: CI
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  build_and_test:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
